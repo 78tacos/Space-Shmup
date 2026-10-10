@@ -17,7 +17,7 @@ public class Enemy_3 : Enemy
     private float birthTime;
 
     void Start() {
-        points = new Vector3[3]; // Initialize points
+        points = new Vector3[3];
         
         // The start position has already been set by Main.SpawnEnemy()
         points[0] = pos;
@@ -26,40 +26,35 @@ public class Enemy_3 : Enemy
         float xMin = -bndCheck.camWidth + bndCheck.radius;
         float xMax = bndCheck.camWidth - bndCheck.radius;
 
-        // Pick a random final position above the top of the screen
+        // End point keeps the spawn height and picks a random x
         points[2] = Vector3.zero;
         points[2].y = pos.y;
         points[2].x = Random.Range( xMin, xMax );
 
-        // Set the birthTime to the current time
         birthTime = Time.time;
 
         if ( drawDebugInfo ) DrawDebug();
     }
 
     public override void Move() {
-        // Bezier curves work based on a u value between 0 & 1
+        // u runs from 0 to 1 across lifeTime
         float u = ( Time.time - birthTime ) / lifeTime;
 
         if ( u > 1 ) {
-            // This Enemy_3 has finished its life
             Destroy( this.gameObject );
             return;
         }
 
         transform.rotation = Quaternion.Euler( u * 180, 0, 0 );
 
-        // Interpolate the three Bezier curve points
         pos = Utils.Bezier( u, points );
         // Enemy_3 does not call base.Move()
     }
 
     void DrawDebug() {
         // Draw the three points
-        // This function absolutely isn't working for me
         Debug.DrawLine( points[0], points[1], Color.cyan, lifeTime );
         Debug.DrawLine( points[1], points[2], Color.yellow, lifeTime );
-        //print("Drawing");
 
         // Draw the Bezier Curve
         float numSections = 20;

@@ -7,7 +7,6 @@ public class Hero : MonoBehaviour
     static public Hero  S { get; private set;} // Singleton property
 
     [Header("Inscribed")]
-    // These fields control the movement of the ship
     public float        speed = 30;
     public float        rollMult = -45;
     public float        pitchMult = 30;
@@ -16,7 +15,6 @@ public class Hero : MonoBehaviour
 
     [Header("Dynamic")] [Range(0,4)]
     private float _shieldLevel = 1;
-    //public float    shieldLevel = 1;
     [Tooltip( "This field holds a reference to the last triggering GameObject" )]
     private GameObject lastTriggerGo = null;
 
@@ -31,11 +29,9 @@ public class Hero : MonoBehaviour
 
     void Update()
     {
-        // Pull in information from the Input class
         float hAxis = Input.GetAxis("Horizontal");
         float vAxis = Input.GetAxis("Vertical");
 
-        // Change transform.position based on the axes
         Vector3 pos = transform.position;
         pos.x += hAxis * speed * Time.deltaTime;
         pos.y += vAxis * speed * Time.deltaTime;
@@ -43,9 +39,7 @@ public class Hero : MonoBehaviour
 
         // Rotate the ship to make it feel more dynamic
         transform.rotation = Quaternion.Euler(vAxis*pitchMult,hAxis*rollMult,0);
-        //transform.rotation = Quaternion.Euler(vAxis*pitchMult - 90,hAxis*rollMult,0);
 
-        // Allow the ship to fire
         if ( Input.GetKeyDown( KeyCode.Space ) ) {
             TempFire();
         }
@@ -61,23 +55,21 @@ public class Hero : MonoBehaviour
     void OnTriggerEnter(Collider other) {
         Transform rootT = other.gameObject.transform.root;
         GameObject go = rootT.gameObject;
-        //Debug.Log("Shield trigger hit by: " +go.gameObject.name);
 
         // Make sure it's not the same triggering go as last time
         if ( go == lastTriggerGo ) return;
         lastTriggerGo = go;
 
         Enemy enemy = go.GetComponent<Enemy>();
-        if (enemy != null) {    // If the shield was triggered by an enemy
-            shieldLevel--;      // Decrease the level of the shield by 1
-            Destroy(go);        // _ and Destroy the enemy
+        if (enemy != null) {
+            shieldLevel--;
+            Destroy(go);
             Main.ENEMY_DIED(enemy.score);
         } else {
-            // Check if it's an enemy projectile
             ProjectileEnemy enemyProj = go.GetComponent<ProjectileEnemy>();
             if (enemyProj != null) {
-                shieldLevel -= enemyProj.damage;  // Decrease shield by projectile damage
-                Destroy(go);  // Destroy the projectile
+                shieldLevel -= enemyProj.damage;
+                Destroy(go);
             } else {
                 Debug.LogWarning("Shield trigger hit by non-Enemy: "+go.name);
             }
@@ -90,7 +82,7 @@ public class Hero : MonoBehaviour
             _shieldLevel = Mathf.Min( value, 4 );
             // If the shield is going to be set to less than zero...
             if (value < 0) {
-                Destroy(this.gameObject);   // Destroy the Hero
+                Destroy(this.gameObject);
                 Main.HERO_DIED();
             }
         }

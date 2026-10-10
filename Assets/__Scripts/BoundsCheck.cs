@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//If you type /// in Visual Studio, it will automatically expand to a <summary>
-/// <summary>  
-/// Checks whether a GameObject is on screen and can force it to stay on screen.
-/// Keeps a GameObject on screen.
-/// Note that this ONLY works for an orthographic Main Camera.
+/// <summary>
+/// Tracks whether a GameObject is on screen and can pin it there.
+/// Only valid for an orthographic Main Camera.
 /// </summary>
 
 public class BoundsCheck : MonoBehaviour
@@ -29,7 +27,6 @@ public class BoundsCheck : MonoBehaviour
     public bool  keepOnScreen = true;
 
     [Header("Dynamic")]
-    //public bool isOnScreen = true;
     public float camWidth;
     public float camHeight;
 
@@ -39,42 +36,34 @@ public class BoundsCheck : MonoBehaviour
     }
 
     void LateUpdate () {
-        // Find the checkRadius that twill enable center, inset, or outset
+        // Inset shrinks the checked bounds; outset grows them.
         float checkRadius = 0;
         if (boundsType == eType.inset) checkRadius = -radius;
         if (boundsType == eType.outset) checkRadius = radius;
 
         Vector3 pos = transform.position;
         screenLocs = eScreenLocs.onScreen;
-        //isOnScreen = true;
 
-        // Restrict the X position to camWidth
         if (pos.x > camWidth + checkRadius) {
             pos.x = camWidth + checkRadius;
             screenLocs |= eScreenLocs.offRight;
-            //isOnScreen = false;
         }
         if (pos.x < -camWidth - checkRadius) {
             pos.x = -camWidth - checkRadius;
             screenLocs |= eScreenLocs.offLeft;
-            //isOnScreen = false;
         }
 
-        // Restrict the Y position to camHeight
         if (pos.y > camHeight + checkRadius) {
             pos.y = camHeight + checkRadius;
             screenLocs |= eScreenLocs.offUp;
-            //isOnScreen = false;
         }
         if (pos.y < -camHeight - checkRadius) {
             pos.y = -camHeight - checkRadius;
             screenLocs = eScreenLocs.offDown;
-            //isOnScreen = false;
         }
         if( keepOnScreen && !isOnScreen ) {
             transform.position = pos;
             screenLocs = eScreenLocs.onScreen;
-            //isOnScreen = true;
         }
     }
 

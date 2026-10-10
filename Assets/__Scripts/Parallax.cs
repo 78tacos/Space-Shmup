@@ -31,10 +31,8 @@ public class Parallax : MonoBehaviour
 
         if (playerTrans != null) {
             tX = -playerTrans.transform.position.x * motionMult;
-            //tY += -poi.transform.position.y * motionMult;
         }
 
-        // Position panels[0]
         panels[0].position = new Vector3(tX, tY, depth);
         // Position panels[1] where needed to make a continuous starfield
         if (tY >= 0) {

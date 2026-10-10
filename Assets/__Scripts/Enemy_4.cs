@@ -14,21 +14,17 @@ public class Enemy_4 : Enemy
     private int direction = 1; // 1 for right, -1 for left
     
     void Start() {
-        // Schedule first direction change
         nextDirectionChange = Time.time + changeDirectionTime;
-        // Randomize initial direction
         direction = Random.value > 0.5f ? 1 : -1;
     }
     
-    // Override the Move function to add zigzag movement
+    // Zigzag while falling. Does not call base.Move().
     public override void Move() {
-        // Check if it's time to change direction
         if (Time.time > nextDirectionChange) {
-            direction *= -1; // Reverse direction
+            direction *= -1;
             nextDirectionChange = Time.time + changeDirectionTime;
         }
         
-        // Move horizontally while also moving down
         Vector3 tempPos = pos;
         tempPos.y -= speed * Time.deltaTime;
         tempPos.x += direction * horizontalSpeed * Time.deltaTime;

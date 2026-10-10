@@ -9,23 +9,18 @@ public class Shield : MonoBehaviour
     public float rotationsPerSecond = .1f;
 
     [Header("Dynamic")]
-    public int levelShown = 0;  // This is set between lines // c & d
+    public int levelShown = 0;
 
-    // This non-public variable will not appear in the Inspector
     Material mat;
 
-    // Start is called before the first frame update
     void Start()
     {
         mat = GetComponent<Renderer>().material;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // Read the current shield level from the Hero Singleton
         int currLevel = Mathf.FloorToInt( Hero.S.shieldLevel );
-        // If this is different from levelShown...
         if ( levelShown != currLevel) {
             levelShown = currLevel;
             // Adjust the texture offset to show different shield level

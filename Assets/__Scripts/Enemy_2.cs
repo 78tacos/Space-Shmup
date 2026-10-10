@@ -25,42 +25,35 @@ public class Enemy_2 : Enemy
 
         // Possibly swap sides
         if(Random.value > 0.5f) {
-            // Setting the .x of each point to its negative will move it to
-            // the other side of the screen
+            // Negating x moves the point to the other side of the screen
             p0.x *= -1;
             p1.x *= -1;
         }
 
-        // Set the birthTime to the current time
         birthTime = Time.time;
 
-        // Set up the initial ship rotation
+        // Face p1. Vector3.back keeps the sprite upright.
         transform.position = p0;
         transform.LookAt(p1, Vector3.back);
         baseRotation = transform.rotation;
     }
 
     public override void Move() {
-        // Linear interpolations work based on a u value between 0 & 1
+        // u runs from 0 to 1 across lifeTime
         float u = (Time.time - birthTime) / lifeTime;
 
-        // If u>1, then it has been longer than lifeTime since birthTime
         if (u > 1) {
-            // This Enemy_2 has finished its life
             Destroy( this.gameObject );
             return;
         }
 
-        // Use the AnimationCurve to set the rotation about Y
+        // Roll along rotCurve over the flight
         float shipRot = rotCurve.Evaluate( u ) * 360;
-        //if ( p0.x > p1.x ) shipRot = -shipRot;
-        //transform.rotation = Quaternion.Euler(0, shipRot, 0);
         transform.rotation = baseRotation * Quaternion.Euler(-shipRot, 0, 0);
 
-        // Adjust u by adding a U Curve based on a Sine wave
+        // Ease the lerp so speed is not constant
         u = u + sinEccentricity*( Mathf.Sin(u*Mathf.PI*2) );
 
-        // Interpolate the two linear interpolation points
         pos = (1 - u) * p0 + u*p1;
 
         // Note that Enemy_2 does NOT call the base.Move() method

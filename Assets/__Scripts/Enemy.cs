@@ -6,13 +6,13 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [Header("Inscribed")]
-    public float speed      = 10f;      // The movement speed is 10m/s
+    public float speed      = 10f;      // Meters per second
     public float fireRate   = 0.3f;     // Seconds/shot
     public float health     = 10;       // Damage needed to destroy this enemy
     public int   score      = 100;      // Points earned for destroying this
-    public GameObject projectilePrefab; // Enemy projectile prefab
-    public float projectileSpeed = 20f; // Speed of enemy projectiles
-    public bool canShoot = false;       // Whether this enemy can shoot
+    public GameObject projectilePrefab;
+    public float projectileSpeed = 20f;
+    public bool canShoot = false;
 
     protected BoundsCheck bndCheck;
     private float lastFireTime = 0f;
@@ -26,7 +26,6 @@ public class Enemy : MonoBehaviour
         lastFireTime = Time.time + Random.Range(0f, fireRate);
     }
 
-    // This is a Property: A method that acts like a field
     public Vector3 pos {
         get{
             return this.transform.position;
@@ -38,7 +37,6 @@ public class Enemy : MonoBehaviour
     void Update() {
         Move();
         
-        // Fire projectiles if this enemy can shoot
         if (canShoot && projectilePrefab != null && bndCheck.isOnScreen) {
             if (Time.time - lastFireTime > fireRate) {
                 Fire();
@@ -46,20 +44,9 @@ public class Enemy : MonoBehaviour
             }
         }
         
-        // Check whether this Enemy has gone off the bottom of the screen
         if ( bndCheck.LocIs( BoundsCheck.eScreenLocs.offDown ) ) {
             Destroy( gameObject );
         }
-
-        // Old Garbage method. It lies here as an example of what NOT to do lol
-        /*
-        if ( !bndCheck.isOnScreen ) {
-            if ( pos.y < bndCheck.camHeight - bndCheck.radius ) {
-                // We're off the bottom, so destroy this GameObject
-                Destroy( gameObject );
-            }
-        }
-        */
     }
     
     public virtual void Fire() {
@@ -84,8 +71,8 @@ public class Enemy : MonoBehaviour
     void OnCollisionEnter( Collision coll ) {
         GameObject otherGO = coll.gameObject;
         if ( otherGO.GetComponent<ProjectileHero>() != null ) {
-            Destroy( otherGO );     // Destroy the Projectile
-            Destroy( gameObject );  // Destroy this Enemy GameObject
+            Destroy( otherGO );
+            Destroy( gameObject );
             Main.ENEMY_DIED(score);
         } else {
             Debug.Log( "Enemy hit by non-ProjectileHero: " + otherGO.name );
